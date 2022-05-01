@@ -20,8 +20,9 @@ export function colorToCss(color) {
     case "g": return "green";
     case "b": return "blue";
     case "y": return "yellow";
+    default: return color; 
   }
-  return color;
+  //return color;
 }
 class Game extends React.Component {
 
@@ -33,7 +34,8 @@ class Game extends React.Component {
       turns: 0,
       grid: null,
       complete: false,  // true if game is complete, false otherwise
-      waiting: false
+      waiting: false,
+      points:0
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
@@ -73,7 +75,12 @@ class Game extends React.Component {
     //        [r,b,b,v,p,y,p,r,b,g,p,y,b,r],
     //        [v,g,p,b,v,v,g,g,g,b,v,g,g,g]],r, Grid)
     const gridS = JSON.stringify(this.state.grid).replaceAll('"', "");
-    const queryS = "flick(" + gridS + "," + color + ", Grid)";
+    const fila=0;
+    const col=0; 
+    const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+")";
+    //const queryS = "flick(" + gridS + "," + color + ", Grid)";
+    console.log(fila); 
+	  console.log(col);
     this.setState({
       waiting: true
     });
@@ -82,7 +89,8 @@ class Game extends React.Component {
         this.setState({
           grid: response['Grid'],
           turns: this.state.turns + 1,
-          waiting: false
+          waiting: false,
+          points: this.state.points + 1,
         });
       } else {
         // Prolog query will fail when the clicked color coincides with that in the top left cell.
@@ -112,6 +120,10 @@ class Game extends React.Component {
           <div className="turnsPanel">
             <div className="turnsLab">Turns</div>
             <div className="turnsNum">{this.state.turns}</div>
+          </div>
+          <div className="pointsPanel">
+            <div className="pointsLab">Points:</div>
+            <div className="pointsNum">{this.state.points}</div>
           </div>
         </div>
         <Board grid={this.state.grid} />
