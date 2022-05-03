@@ -1,6 +1,6 @@
 :- module(proylcc, 
 	[  
-		flick/3
+		flick/5
 	]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,63 +10,46 @@
 % FGrid es el resultado de hacer 'flick' de la grilla Grid con el color Color.
 % Retorna false si Color coincide con el color de la celda superior izquierda de la grilla. 
 
-flick(Grid,Color,Grid,_PosX,_PosY):-
-	Grid = [F|_],
-	F = [Color|_].
+flick(Grid, CN, FGrid, PosX, PosY):-
+	obtenerElemGrilla(PosX, PosY, Grid, E),
+	cambiarC(Grid, E, CN, PosX, PosY, FGrid).
 
-flick(Grid,Color,FGrid,PosX,PosY):-
-	Grid = [F|_],
-	F = [X|_],
-	pintar(X,Color,Grid,PosX,PosY,FGrid,_).
+% No tengo que verificar si la pos se cae en flick, 
+% on click nunca entra con negativos o fuera de rango
 
-pintar(Ant,Color,Grid,X,Y,Rta,CantPintado):-
-	getColorEnPos(Grid,X,Y,PosCol),
-	Ant=PosCol,
-	cambiarColorEnPosicion(Color,Grid,X,Y,RtaA),
-	pintarContorno(Ant,Color,RtaA,X,Y,Rta,CPTotal),
-	CantPintado is CPTotal+1.
+% Obtengo el Elemento E de una Grilla Grid
+obtenerElemGrilla(PosX, PosY, Grid, E):- 
+    nth0(PosX, Grid, List), nth0(PosY, List, E).
 
-pintar(Ant,_,Grid,X,Y,Grid,0):-
-	getColorEnPos(Grid,X,Y,PosCol),
-	Ant\=PosCol.
+% pintar Un elemento de mi grilla 
+% busco mi elemento E, si es igual lo cambio de color y busco sus adyacentes
+cambiarC(Grid, CA, CN, PosX, PosY, NGrid):-
+   cambiarColorG(Grid, CA, CN, PosX, PosY, NGrid),
+   adyacentes(Grid, CA, CN, PosX, PosY, NGrid).
+    
+cambiarC(Grid, CA, CN, PosX, PosY, NGrid):-
+     not(cambiarColorG(Grid, CA, CN, PosX, PosY, NGrid)). 
+    
+adyacentes(Grid, CA, CN, PosX, PosY, NGrid):-
+    AdyArriba is PosX-1, 
+    AdyAbajo is PosX+1,
+    AdyIzq is PosY-1,
+    AdyDer is PosY+1,
+    cambiarC(Grid, CA, CN, AdyArriba, PosY, NGrid),
+	cambiarC(Grid,PosX,AdyIzq,X,Y,NGrid),
+	cambiarC(Grid,AdyAbajo,PosY,X,Y,NGrid),
+	cambiarC(Grid,PosX,AdyDer,X,Y,NGrid).
+    
+    
+obtenerElemF(PosX, Grid, E):- nth0(PosX, Grid, E).
 
-pintar(_,_,[G|Grid],X,Y,[G|Grid],0):-
-	X<0;
-	Y<0;
-	largo([G|Grid],LF),	X>=LF;
-	largo(G,LC),	Y>=LC.
+replace(Pos, L, EN, ListN) :-
+  nth0(Pos, L, _, R),
+  nth0(Pos, ListN, EN, R).
 
-pintarContorno(Ant,Color,Grid,X,Y,Rta,CantPintado):-
-	Xmen is X-1,Ymen is Y-1,
-	Xmas is X+1,Ymas is Y+1,
-	pintar(Ant,Color,Grid,Xmen,Y,RtaA,CPA),
-	pintar(Ant,Color,RtaA,Xmas,Y,RtaB,CPB),
-	pintar(Ant,Color,RtaB,X,Ymas,RtaC,CPC),
-	pintar(Ant,Color,RtaC,X,Ymen,Rta,CPD),
-	CantPintado is CPA+CPB+CPC+CPD.
+cambiarColorF(CA, CN, PosY, Grid, ListN):-
+   obtenerElemF(PosY, Grid, CA), replace(PosY, Grid, CN, ListN).
 
-getColorEnPos([G|_],X,0,Rta):-
-	getColorEnLista(G,X,Rta).
-getColorEnPos([_|Grid],X,Y,Rta):-
-	YY is Y-1,
-	getColorEnPos(Grid,X,YY,Rta).
-
-getColorEnLista([L|_],0,L).
-getColorEnLista([_|Ls],X,Rta):-
-	XX is X-1,
-	getColorEnLista(Ls,XX,Rta).
-
-reemplazarEnLista(Color,[_|Ls],0,[Color|Ls]).
-reemplazarEnLista(Color,[L|Ls],X,[L|Rta]):-
-	XX is X-1,
-	reemplazarEnLista(Color,Ls,XX,Rta).
-
-cambiarColorEnPosicion(Color,[G|Grid],X,0,[Rta|Grid]):-
-	reemplazarEnLista(Color,G,X,Rta).
-cambiarColorEnPosicion(Color,[G|Grid],X,Y,[G|Rta]):-
-	YY is Y-1,
-	cambiarColorEnPosicion(Color,Grid,X,YY,Rta).
-
-largo([],0).
-largo([_|Xs],Rta):- largo(Xs,Rtaa),
-	Rta is Rtaa+1.
+cambiarColorG(Grid, CA, CN, PosX, PosY, GridN):-
+   obtenerElemF(PosX, Grid, F), cambiarColorF(CA, CN, PosY, F, L),
+   replace(PosX, Grid, L, GridN).   

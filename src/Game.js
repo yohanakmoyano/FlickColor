@@ -35,10 +35,12 @@ class Game extends React.Component {
       grid: null,
       complete: false,  // true if game is complete, false otherwise
       waiting: false,
+      origin: undefined,
       points:0
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
+    this.onOriginSelected = this.onOriginSelected.bind(this);
     this.pengine = new PengineClient(this.handlePengineCreate);
   }
 
@@ -79,11 +81,11 @@ class Game extends React.Component {
     const col=0; 
     const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+")";
     //const queryS = "flick(" + gridS + "," + color + ", Grid)";
-    console.log(fila); 
-	  console.log(col);
+    
     this.setState({
       waiting: true
     });
+
     this.pengine.query(queryS, (success, response) => {
       if (success) {
         this.setState({
@@ -100,6 +102,14 @@ class Game extends React.Component {
       }
     });
   }
+
+  //[2,4]
+  onOriginSelected(pos){
+    this.setState({
+      origin : pos
+    })
+  }
+
 
   render() {
     if (this.state.grid === null) {
@@ -126,7 +136,11 @@ class Game extends React.Component {
             <div className="pointsNum">{this.state.points}</div>
           </div>
         </div>
-        <Board grid={this.state.grid} />
+        <Board 
+          grid={this.state.grid} 
+          origin={this.state.origin} 
+          onOriginSelected={!this.state.origin ? this.onOriginSelected : undefined}
+        />
       </div>
     );
   }
