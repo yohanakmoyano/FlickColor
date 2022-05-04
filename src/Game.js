@@ -1,6 +1,7 @@
 import React from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
+import Square from './Square';
 
 /**
  * List of colors.
@@ -22,7 +23,7 @@ export function colorToCss(color) {
     case "y": return "yellow";
     default: return color; 
   }
-  //return color;
+ 
 }
 class Game extends React.Component {
 
@@ -57,6 +58,10 @@ class Game extends React.Component {
   }
 
   handleClick(color) {
+
+    
+    this.state.clicks.push(color);
+
     // No action on click if game is complete or we are waiting.
     if (this.state.complete || this.state.waiting) {
       return;
@@ -80,10 +85,8 @@ class Game extends React.Component {
     const gridS = JSON.stringify(this.state.grid).replaceAll('"', "");
     const fila= this.state.origin ? this.state.origin[0] : 0;
     const col= this.state.origin ? this.state.origin[1] : 0;
-    const capturadas=0;
     const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+",Capturadas)";
-    //const queryS = `flick(${gridS}, ${color}, Grid, ${originS})`;
-    //const queryS = "flick(" + gridS + "," + color + ", Grid)";
+    
     
     this.setState({
       waiting: true
@@ -94,9 +97,9 @@ class Game extends React.Component {
         this.setState({
           grid: response['Grid'],
           capturadas: response['Capturadas'],
+          complete: response['Capturadas']===195,
           turns: this.state.turns + 1,
           waiting: false,
-          points: this.state.points + 1,
         });
       } else {
         // Prolog query will fail when the clicked color coincides with that in the top left cell.
@@ -107,7 +110,6 @@ class Game extends React.Component {
     });
   }
 
-  //[2,4]
   onOriginSelected(pos){
     this.setState({
       origin : pos
@@ -151,7 +153,15 @@ class Game extends React.Component {
         <div className="clicksPanel">
               <div className="clicksLab">History:</div>
               <div className="clicksNum">
-                {this.state.clicks}</div>
+                {this.state.clicks.map((colorS,i) => 
+                   <Square
+                    value={colorS}
+                    key={i}
+                    className={"clicksSquare"}
+                  />
+                  
+                )}
+              </div>
         </div>
 
       </div>
