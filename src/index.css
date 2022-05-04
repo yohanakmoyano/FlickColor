@@ -3,6 +3,11 @@ body {
   margin: 20px;
 }
 
+.container{
+  display: flex;
+  flex-direction: column;
+}
+
 .game {
   display: flex;
   flex-direction: row;
@@ -25,7 +30,7 @@ body {
 .colorBtn {
   height: 40px;
   width: 40px;
-  border: none;
+  border: 2px outset black;
   cursor: pointer;
 }
 
@@ -43,7 +48,16 @@ body {
   color: darkblue;
 }
 
-.pointsPanel {
+.adyPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  font-size: 20px;
+  color: darkblue;
+}
+
+.clicksPanel {
   display: flex;
   flex-direction: column;
   align-items: center;

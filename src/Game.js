@@ -36,6 +36,7 @@ class Game extends React.Component {
       complete: false,  // true if game is complete, false otherwise
       waiting: false,
       origin: undefined,
+      clicks:[],
       points:0
     };
     this.handleClick = this.handleClick.bind(this);
@@ -79,6 +80,7 @@ class Game extends React.Component {
     const gridS = JSON.stringify(this.state.grid).replaceAll('"', "");
     const fila=0;
     const col=0; 
+    //const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+")";
     const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+")";
     //const queryS = "flick(" + gridS + "," + color + ", Grid)";
     
@@ -116,31 +118,40 @@ class Game extends React.Component {
       return null;
     }
     return (
-      <div className="game">
-        <div className="leftPanel">
-          <div className="buttonsPanel">
-            {colors.map(color =>
-              <button
-                className="colorBtn"
-                style={{ backgroundColor: colorToCss(color) }}
-                onClick={() => this.handleClick(color)}
-                key={color}
-              />)}
+      <div className="container">
+        <div className="game">
+          <div className="leftPanel">
+            <div className="buttonsPanel">
+              {colors.map(color =>
+                <button
+                  className="colorBtn"
+                  style={{ backgroundColor: colorToCss(color) }}
+                  onClick={() => this.handleClick(color)}
+                  key={color}
+                />)}
+            </div>
+            <div className="turnsPanel">
+              <div className="turnsLab">Turns</div>
+              <div className="turnsNum">{this.state.turns}</div>
+            </div>
+            <div className="adyPanel">
+              <div className="adyLab">Adyacents:</div>
+              <div className="adyNum">{this.state.points}</div>
+            </div>
           </div>
-          <div className="turnsPanel">
-            <div className="turnsLab">Turns</div>
-            <div className="turnsNum">{this.state.turns}</div>
-          </div>
-          <div className="pointsPanel">
-            <div className="pointsLab">Points:</div>
-            <div className="pointsNum">{this.state.points}</div>
-          </div>
+          <Board 
+            grid={this.state.grid} 
+            origin={this.state.origin} 
+            onOriginSelected={!this.state.origin ? this.onOriginSelected : undefined}
+          />
         </div>
-        <Board 
-          grid={this.state.grid} 
-          origin={this.state.origin} 
-          onOriginSelected={!this.state.origin ? this.onOriginSelected : undefined}
-        />
+
+        <div className="clicksPanel">
+              <div className="clicksLab">History:</div>
+              <div className="clicksNum">
+                {this.state.clicks}</div>
+        </div>
+
       </div>
     );
   }
