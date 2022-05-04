@@ -85,3 +85,14 @@ body {
   display: inline;
   padding-left: 30px;
 }
+
+.EndGame{
+  position: absolute;
+  align-items: center;
+  font-size: 100px;
+  background-color: rgba(255, 255, 255, 0.598);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}

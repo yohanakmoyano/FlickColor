@@ -148,6 +148,12 @@ class Game extends React.Component {
             origin={this.state.origin} 
             onOriginSelected={!this.state.origin ? this.onOriginSelected : undefined}
           />
+
+            <div className="EndGame">
+              {this.state.complete===true &&
+              <div>"Ganastee"</div>}
+            </div>
+
         </div>
 
         <div className="clicksPanel">
