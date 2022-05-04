@@ -57,15 +57,6 @@ body {
   color: darkblue;
 }
 
-.clicksPanel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 40px;
-  font-size: 20px;
-  color: darkblue;
-}
-
 .turnsLab {
   text-transform: uppercase;
 }
@@ -81,9 +72,16 @@ body {
   grid-template-rows: repeat(14, 40px);
 }
 
-.clicksSquare{
-  width: 40px;
-  height: 40px;
+.clicksPanel {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  font-size: 20px;
+  color: darkblue;
+}
+
+.clicksSquare{
+  display: inline;
+  padding-left: 30px;
 }
