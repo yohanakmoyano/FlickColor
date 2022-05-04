@@ -37,7 +37,7 @@ class Game extends React.Component {
       waiting: false,
       origin: undefined,
       clicks:[],
-      points:0
+      capturadas:0
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
@@ -78,10 +78,11 @@ class Game extends React.Component {
     //        [r,b,b,v,p,y,p,r,b,g,p,y,b,r],
     //        [v,g,p,b,v,v,g,g,g,b,v,g,g,g]],r, Grid)
     const gridS = JSON.stringify(this.state.grid).replaceAll('"', "");
-    const fila=0;
-    const col=0; 
-    //const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+")";
-    const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+")";
+    const fila= this.state.origin ? this.state.origin[0] : 0;
+    const col= this.state.origin ? this.state.origin[1] : 0;
+    const capturadas=0;
+    const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+",Capturadas)";
+    //const queryS = `flick(${gridS}, ${color}, Grid, ${originS})`;
     //const queryS = "flick(" + gridS + "," + color + ", Grid)";
     
     this.setState({
@@ -92,6 +93,7 @@ class Game extends React.Component {
       if (success) {
         this.setState({
           grid: response['Grid'],
+          capturadas: response['Capturadas'],
           turns: this.state.turns + 1,
           waiting: false,
           points: this.state.points + 1,
@@ -136,7 +138,7 @@ class Game extends React.Component {
             </div>
             <div className="adyPanel">
               <div className="adyLab">Adyacents:</div>
-              <div className="adyNum">{this.state.points}</div>
+              <div className="adyNum">{this.state.capturadas}</div>
             </div>
           </div>
           <Board 
