@@ -150,8 +150,7 @@ class Game extends React.Component {
           />
 
             <div className="EndGame">
-              {this.state.complete===true &&
-              <div>"Ganastee"</div>}
+              {this.state.complete===true ? <img src="youwin.jpg" alt="MDN"></img> : ""}
             </div>
 
         </div>

@@ -87,12 +87,20 @@ body {
 }
 
 .EndGame{
-  position: absolute;
+  
   align-items: center;
   font-size: 100px;
+  
+  /*
+  position: absolute;
   background-color: rgba(255, 255, 255, 0.598);
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
+  */
+}
+
+.origen{
+  border : 3px solid black;
 }
