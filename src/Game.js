@@ -97,7 +97,7 @@ class Game extends React.Component {
         this.setState({
           grid: response['Grid'],
           capturadas: response['Capturadas'],
-          complete: response['Capturadas']===195,
+          complete: response['Capturadas']===196,
           turns: this.state.turns + 1,
           waiting: false,
         });

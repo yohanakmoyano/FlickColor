@@ -12,7 +12,9 @@
 
 flick(Grid, CN, NGrid, PosX, PosY, CA):-
 	obtenerElemGrilla(PosX, PosY, Grid, E),
-	cambiarC(Grid, E, CN, PosX, PosY, NGrid, CA).
+    CN\=E,
+	cambiarC(Grid, E, CN, PosX, PosY, NGrid, CantAdy),
+    sum_num(CantAdy,1,CA).
 
 %No tengo que verificar si la pos se cae en flick, 
 %on click nunca entra con negativos o fuera de rango
