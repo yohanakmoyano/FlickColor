@@ -17,8 +17,8 @@ export function colorToCss(color) {
   switch (color) {
     case "r": return "#FF7547";
     case "v": return "#ED82ED";
-    case "p": return "#FB6A82";
-    case "g": return "#9bd0b7";
+    case "p": return "#FF93A3";
+    case "g": return "#8AF2A1";
     case "b": return "#A3EBE1";
     case "y": return "#FFE175";
     default: return color; 
@@ -38,7 +38,7 @@ class Game extends React.Component {
       waiting: false,
       origin: undefined,
       clicks:[],
-      capturadas:0
+      capturadas:0,
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
@@ -58,9 +58,10 @@ class Game extends React.Component {
   }
 
   handleClick(color) {
-
-    
-    this.state.clicks.push(color);
+    //colorAnt = color;
+    //if(colorAnt === color)
+      
+  
 
     // No action on click if game is complete or we are waiting.
     if (this.state.complete || this.state.waiting) {
@@ -83,9 +84,13 @@ class Game extends React.Component {
     //        [r,b,b,v,p,y,p,r,b,g,p,y,b,r],
     //        [v,g,p,b,v,v,g,g,g,b,v,g,g,g]],r, Grid)
     const gridS = JSON.stringify(this.state.grid).replaceAll('"', "");
-    const fila= this.state.origin ? this.state.origin[0] : 0;
-    const col= this.state.origin ? this.state.origin[1] : 0;
+    const length = gridS.split(",").length;
+    const fila = this.state.origin ? this.state.origin[0] : 0;
+    const col = this.state.origin ? this.state.origin[1] : 0;
     const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+",Capturadas)";
+    //const PE = this.state.
+    //const queryS = "ayuda("Grid, "+fila+","+col+", MejorEstrategia)";
+    
     
     
     this.setState({
@@ -94,10 +99,11 @@ class Game extends React.Component {
 
     this.pengine.query(queryS, (success, response) => {
       if (success) {
+        this.state.clicks.push(color);
         this.setState({
           grid: response['Grid'],
           capturadas: response['Capturadas'],
-          complete: response['Capturadas']===196,
+          complete: response['Capturadas']===length,
           turns: this.state.turns + 1,
           waiting: false,
         });
@@ -141,6 +147,9 @@ class Game extends React.Component {
             <div className="adyPanel">
               <div className="adyLab">Adyacents:</div>
               <div className="adyNum">{this.state.capturadas}</div>
+              <input type="number" min="1" onChange={e=>this.setState({
+                pe:e.target.value
+              })}/> 
             </div>
           </div>
           <Board 
