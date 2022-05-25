@@ -15,8 +15,8 @@
 flick(Grid, CN, NGrid, PosX, PosY, CantTotal):-
 	obtenerElemGrilla(PosX, PosY, Grid, E),
     CN\=E,
-	cambiarC(Grid, E, CN, PosX, PosY, NGrid, CantAdy),
-    sum_num(CantAdy,1,CantTotal).
+	cambiarC(Grid, E, CN, PosX, PosY, NGrid),
+    adyCStar([PosX, PosY], NGrid, _Res, CantTotal).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % obtenerElemGrilla(+PosX, +PosY, +Grid, -E)
@@ -27,6 +27,71 @@ flick(Grid, CN, NGrid, PosX, PosY, CantTotal):-
 % Retorna el elemento E de la grila Grid en la posicion (PosX,PosY).
 obtenerElemGrilla(PosX, PosY, Grid, E):- 
     nth0(PosX, Grid, List), nth0(PosY, List, E).
+
+
+
+%codigo de mauro%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+adyCStar(Origin, Grid, Res, Long) :-
+    adyCStarSpread([Origin], [], Grid, Res),
+    length(Res, Long).
+
+adyCStarSpread([], Vis, _Grid, Vis).
+
+adyCStarSpread(Pend, Vis, Grid, Res):-
+    Pend = [P|Ps],
+    findall(A, 
+	        (
+    	        adyC(P, Grid, A),
+        	    not(member(A, Pend)),
+            	not(member(A, Vis))
+	        ), 
+            AdyCP),
+    append(AdyCP, Ps, NPend),
+    adyCStarSpread(NPend, [P|Vis], Grid, Res).
+
+/* 
+ * adyC(+P, +Grid, -A)
+ */
+
+adyC(P, Grid, A):-
+    ady(P, Grid, A),
+    color(P, Grid, C),
+    color(A, Grid, C).
+
+/* 
+ * ady(+P, +Grid, -A)
+ */
+
+ady([X, Y], Grid, [X1, Y]):-
+    length(Grid, L),
+    X < L - 1,
+    X1 is X + 1.
+
+ady([X, Y], _Grid, [X1, Y]):-
+    X > 0,
+    X1 is X - 1.
+
+ady([X, Y], Grid, [X, Y1]):-
+    Grid = [F|_],
+    length(F, L),
+    Y < L - 1,
+    Y1 is Y + 1.
+
+ady([X, Y], _Grid, [X, Y1]):-
+    Y > 0,
+    Y1 is Y - 1.
+
+/* 
+ * color(P, Grid, C)
+ */
+
+color([X,Y], Grid, C):-
+    nth0(X, Grid, F),
+    nth0(Y, F, C). 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %cambiarC(+Grid, +CA, +CN, +PosX, +PosY, -NGrid, -CantTotales)
@@ -39,11 +104,10 @@ obtenerElemGrilla(PosX, PosY, Grid, E):-
 % CantTotales cantidad total de celdas capturadas
 % El predicado cambiarC/7, modifica el color en la grilla si mi color actual CA 
 % es igual al color del elemento E en la posicion (PosX,PosY). 
-cambiarC(Grid, CA, CN, PosX, PosY, NGrid, CantTotales):-
+cambiarC(Grid, CA, CN, PosX, PosY, NGrid):-
    obtenerElemGrilla(PosX, PosY, Grid, E), CA=E,
    cambiarElemG(PosX, PosY, Grid, CN, AuxGrid), 
-   adyacentes(AuxGrid, CA, CN, PosX, PosY, NGrid, CantAdy),
-   sum_num(CantAdy, 1, CantTotales).
+   adyacentes(AuxGrid, CA, CN, PosX, PosY, NGrid).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %cambiarC(+Grid, +CA, +_CN, +PosX, +PosY, -Grid, -0)
@@ -56,7 +120,7 @@ cambiarC(Grid, CA, CN, PosX, PosY, NGrid, CantTotales):-
 % CantTotales cantidad total de celdas capturadas
 % El predicado cambiarC/7, retorna la grilla sin modificar si mi color actual CA 
 % es distinto al color del elemento E en la posicion (PosX,PosY). 
-cambiarC(Grid, CA, _CN, PosX, PosY, Grid, 0):-
+cambiarC(Grid, CA, _CN, PosX, PosY, Grid):-
      obtenerElemGrilla(PosX, PosY, Grid, E), CA\=E.  
 
 
@@ -70,7 +134,7 @@ cambiarC(Grid, CA, _CN, PosX, PosY, Grid, 0):-
 % Grid grilla sin cambios
 % CantTotales cantidad total de celdas capturadas
 % El predicado cambiarC/7, verifica que la posicion (PosX,PosY) sea valida. 
-cambiarC(Grid, _CA, _CN, PosX, PosY, Grid, 0):-
+cambiarC(Grid, _CA, _CN, PosX, PosY, Grid):-
 (PosX<0); (PosY<0); (PosX>13); (PosY>13).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,23 +172,12 @@ cambiarElemG(PosX, PosY, Grid, CN, NuevaGrid):-
 % NGrid grilla grilla con los adyacentes 
 % CantAdy cantidad total de celdas capturadas
 % Retorna una grilla con los adyacentes y la cantidad de adaycentes capturados.
-adyacentes(Grid, CA, CN, PosX, PosY, NGrid, CantAdy):-
+adyacentes(Grid, CA, CN, PosX, PosY, NGrid):-
     AdyArriba is PosX-1, 
     AdyAbajo is PosX+1,
     AdyIzq is PosY-1,
     AdyDer is PosY+1,
-    cambiarC(Grid, CA, CN, AdyArriba, PosY, Grid1, R1),
-	cambiarC(Grid1, CA, CN, PosX, AdyIzq, Grid2, R2),
-	cambiarC(Grid2, CA, CN, AdyAbajo, PosY, Grid3, R3),
-	cambiarC(Grid3, CA, CN, PosX, AdyDer, NGrid, R4),
-    CantAdy is R1+R2+R3+R4.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%sum_num(+A, +B, -C)
-% A primer elemento a sumar
-% B segundo elemento a sumar
-% C resultado de la suma
-% Retorna el resultado de la suma.
-sum_num(A, B, C):-
-          C is A + B.
-    
+    cambiarC(Grid, CA, CN, AdyArriba, PosY, Grid1),
+	cambiarC(Grid1, CA, CN, PosX, AdyIzq, Grid2),
+	cambiarC(Grid2, CA, CN, AdyAbajo, PosY, Grid3),
+	cambiarC(Grid3, CA, CN, PosX, AdyDer, NGrid).

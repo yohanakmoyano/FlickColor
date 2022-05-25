@@ -58,10 +58,6 @@ class Game extends React.Component {
   }
 
   handleClick(color) {
-    //colorAnt = color;
-    //if(colorAnt === color)
-      
-  
 
     // No action on click if game is complete or we are waiting.
     if (this.state.complete || this.state.waiting) {
@@ -148,8 +144,7 @@ class Game extends React.Component {
               <div className="adyLab">Adyacents:</div>
               <div className="adyNum">{this.state.capturadas}</div>
               <input type="number" min="1" onChange={e=>this.setState({
-                pe:e.target.value
-              })}/> 
+                pe:e.target.value})}/> 
             </div>
           </div>
           <Board 
