@@ -39,11 +39,13 @@ class Game extends React.Component {
       origin: undefined,
       clicks:[],
       capturadas:0,
+      pe: '',
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
     this.onOriginSelected = this.onOriginSelected.bind(this);
     this.pengine = new PengineClient(this.handlePengineCreate);
+    this.handleHelp = this.handleHelp.bind(this);
   }
 
   handlePengineCreate() {
@@ -57,8 +59,14 @@ class Game extends React.Component {
     });
   }
 
-  handleClick(color) {
+  //Tengo que pasarle pe como parametro ? 
+  // Aca llamo  a la query ? 
+  handleHelp(){
+    this.setState({waiting:true})
+  }
 
+  handleClick(color) {
+    console.log(this.state.pe);
     // No action on click if game is complete or we are waiting.
     if (this.state.complete || this.state.waiting) {
       return;
@@ -84,7 +92,7 @@ class Game extends React.Component {
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+",Capturadas)";
-    //const PE = this.state.
+    //const PE = this.state.pe;
     //const queryS = "ayuda("Grid, "+fila+","+col+", MejorEstrategia)";
     
     
@@ -143,9 +151,18 @@ class Game extends React.Component {
             <div className="adyPanel">
               <div className="adyLab">Adyacents:</div>
               <div className="adyNum">{this.state.capturadas}</div>
-              <input type="number" min="1" onChange={e=>this.setState({
-                pe:e.target.value})}/> 
+              
             </div>
+
+            <div className="strategyPanel">
+              <div className="strategyLab">Strategy Depth:</div>
+              <input type="number" min="1" max="30" onChange={e=>this.setState({
+                  pe:e.target.value})}/> 
+              <button
+                  onClick={() => this.handleHelp()} name="Strategy Help" disabled={this.state.waiting} 
+                  className={"StrategyHelp"}> Strategy Help </button>
+            </div>
+
           </div>
           <Board 
             grid={this.state.grid} 
