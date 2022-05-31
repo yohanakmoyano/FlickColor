@@ -1,8 +1,8 @@
 :- module(proylcc, 
 	[  
-		flick/6
+		flick/6,
+        ayuda/5
 	]).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % flick(+Grid, +CN, -NGrid,+PosX,+PosY,-CantTotal)
 % Grid grilla de colores pasada por parametro
@@ -18,6 +18,53 @@ flick(Grid, CN, NGrid, PosX, PosY, CantTotal):-
 	cambiarC(Grid, E, CN, PosX, PosY, NGrid),
     adyCStar([PosX, PosY], NGrid, _Res, CantTotal).
 
+%Implementacion como lo dijo mauro
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+colors([r,p,g,b,y]).
+
+allColorsButC(Color, Colors):-
+	colors(AllColors), 
+	delete(AllColors, Color, Colors).
+
+%Elimina de colors el elemento de la Pos pasada, y devuelve un arreglo de 5 elementos
+ayuda(Grid, PosX, PosY, PE, Best):-
+	obtenerElemGrilla(PosX, PosY, Grid, E),
+    allColorsButC(E, Colors), 
+    helpAll(Grid, Colors, PosX, PosY, PE, Best).
+    
+helpOne(Grid, Color, PosX, PosY, PE, Best):-
+    PE > 1,
+    flick(Grid, Color, NGrid, PosX, PosY, _CantTotal),
+    allColorsButC(Color, Colors), 
+	PEAux is PE - 1,
+	helpAll(NGrid, Colors, PosX, PosY, PEAux, Best).
+
+helpOne(Grid, Color, PosX, PosY, PE, CantTotal):-
+    flick(Grid, Color, _NGrid, PosX, PosY, CantTotal),
+    PE = 1.
+
+helpAll(_Grid, [], _PosX, _PosY, _PE, 0).
+
+helpAll(Grid, Colors, PosX, PosY, PE, Best):-
+	[C|Cs] = Colors,
+ 	helpOne(Grid, C, PosX, PosY, PE, BestPathOne),
+ 	helpAll(Grid, Cs, PosX, PosY, PE, BestPathAll), 
+ 	mayorC(BestPathOne, BestPathAll, Best).
+
+mayorC(BestPathOne, BestPathAll, R):-
+    BestPathOne > BestPathAll,
+    Aux = BestPathOne,
+    R is Aux.
+
+mayorC(BestPathOne, BestPathAll, R):-
+    BestPathOne < BestPathAll,
+    Aux = BestPathAll,
+    R is Aux.
+
+mayorC(BestPathOne, BestPathAll, 0):-
+    BestPathOne = BestPathAll.
+    
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % obtenerElemGrilla(+PosX, +PosY, +Grid, -E)
 % PosX es la posicion "X" de la celda pasada por parametro
