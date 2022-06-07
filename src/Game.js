@@ -60,13 +60,7 @@ class Game extends React.Component {
     });
   }
 
-  //Tengo que pasarle pe como parametro ? 
-  // Aca llamo  a la query ? 
   handleHelp(){
-
-    
-    //this.setState({waiting:true})
-    //console.log(this.state.pe);
     // No action on click if game is complete or we are waiting.
     if (this.state.complete || this.state.waiting) {
       return;
@@ -86,10 +80,6 @@ class Game extends React.Component {
       if (success) {
         
         this.setState({
-          //grid: response['Grid'],
-          //capturadas: response['Capturadas'],
-          //complete: response['Capturadas']===length,
-          //turns: this.state.turns + 1,
           waiting: false,
           StrategyBest: response['Best'],
         });
@@ -129,11 +119,13 @@ class Game extends React.Component {
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+",Capturadas)";
-    //const PE = this.state.pe;
-    //const queryS = "ayuda("Grid, "+fila+","+col+", MejorEstrategia)";
     
-    
-    
+    if (!this.state.origin) {
+      this.setState({
+          origin: [0,0],
+      })
+    }   
+
     this.setState({
       waiting: true
     });
@@ -193,7 +185,7 @@ class Game extends React.Component {
 
             <div className="strategyPanel">
               <div className="strategyLab">Strategy Depth:</div>
-              <input type="number" min="1" max="30" onChange={e=>this.setState({
+              <input type="number" min="1" max="8" onChange={e=>this.setState({
                   pe:e.target.value})}/> 
               <button
                   onClick={() => this.handleHelp()} name="Strategy Help" disabled={this.state.waiting} 
