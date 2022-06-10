@@ -1,7 +1,7 @@
 :- module(proylcc, 
 	[  
 		flick/6,
-        ayuda/5
+        ayuda/6
 	]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % flick(+Grid, +CN, -NGrid,+PosX,+PosY,-CantTotal)
@@ -20,50 +20,59 @@ flick(Grid, CN, NGrid, PosX, PosY, CantTotal):-
 
 %Implementacion como lo dijo mauro
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-colors([r,p,g,b,y]).
+colors([r,p,g,b,y,v]).
+
+%insertarUltimo(X,[],[X]).
+%insertarUltimo(X,[L|Li],[L|Zi]):-insertarUltimo(X,Li,Zi).
+%agregar(X, L, Lnueva):- Lnueva=[X|L].
 
 allColorsButC(Color, Colors):-
 	colors(AllColors), 
 	delete(AllColors, Color, Colors).
 
 %Elimina de colors el elemento de la Pos pasada, y devuelve un arreglo de 5 elementos
-ayuda(Grid, PosX, PosY, PE, Best):-
+ayuda(Grid, PosX, PosY, PE, Best, AN):-
 	obtenerElemGrilla(PosX, PosY, Grid, E),
     allColorsButC(E, Colors), 
-    helpAll(Grid, Colors, PosX, PosY, PE, Best).
-    
-helpOne(Grid, Color, PosX, PosY, PE, Best):-
+    helpAll(Grid, Colors, PosX, PosY, PE, Best, [], AN).
+
+%Si la prundidad es 1, aca no entra.
+helpOne(Grid, Color, PosX, PosY, PE, Best, _A, AN):-
     PE > 1,
     flick(Grid, Color, NGrid, PosX, PosY, _CantTotal),
     allColorsButC(Color, Colors), 
 	PEAux is PE - 1,
-	helpAll(NGrid, Colors, PosX, PosY, PEAux, Best).
+	helpAll(NGrid, Colors, PosX, PosY, PEAux, Best, AN, []).
 
-helpOne(Grid, Color, PosX, PosY, PE, CantTotal):-
+% aca se le asigna a cada color, la cantidad de adyacentes par ese color.
+%pasa por los 5 colores.
+helpOne(Grid, Color, PosX, PosY, PE, CantTotal, _A, _AN):-
     flick(Grid, Color, _NGrid, PosX, PosY, CantTotal),
     PE = 1.
 
-helpAll(_Grid, [], _PosX, _PosY, _PE, 0).
+helpAll(_Grid, [], _PosX, _PosY, _PE, 0, _A, _AN).
 
-helpAll(Grid, Colors, PosX, PosY, PE, Best):-
+helpAll(Grid, Colors, PosX, PosY, PE, Best, A, AN):-
 	[C|Cs] = Colors,
- 	helpOne(Grid, C, PosX, PosY, PE, BestPathOne),
- 	helpAll(Grid, Cs, PosX, PosY, PE, BestPathAll), 
- 	mayorC(BestPathOne, BestPathAll, Best).
-
-mayorC(BestPathOne, BestPathAll, R):-
+ 	helpOne(Grid, C, PosX, PosY, PE, BestPathOne, A, AN),
+ 	helpAll(Grid, Cs, PosX, PosY, PE, BestPathAll, A, AN),
+ 	mayorC(BestPathOne, BestPathAll, Best, A, AN, C).
+ 
+mayorC(BestPathOne, BestPathAll, R, A, AN, C):-
     BestPathOne > BestPathAll,
     Aux = BestPathOne,
-    R is Aux.
+    R is Aux,
+    AN = [C|A].
 
-mayorC(BestPathOne, BestPathAll, R):-
+mayorC(BestPathOne, BestPathAll, R, _A, _AN, _C):-
     BestPathOne < BestPathAll,
     Aux = BestPathAll,
     R is Aux.
+    %AN = [C|A].
 
-mayorC(BestPathOne, BestPathAll, 0):-
+mayorC(BestPathOne, BestPathAll, 0, _A, _AN, _C):-
     BestPathOne = BestPathAll.
-    
+    %AN = [C|A].
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % obtenerElemGrilla(+PosX, +PosY, +Grid, -E)

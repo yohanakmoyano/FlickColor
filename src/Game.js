@@ -41,6 +41,7 @@ class Game extends React.Component {
       capturadas:0,
       pe: '',
       StrategyBest: 0,
+      listColors: [],
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
@@ -70,7 +71,7 @@ class Game extends React.Component {
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const PE = this.state.pe;
-    const queryA = "ayuda(" + gridA + ","+fila+","+col+","+PE+",Best)";
+    const queryA = "ayuda(" + gridA + ","+fila+","+col+","+PE+",Best,List)";
     
     this.setState({
       waiting: true
@@ -82,6 +83,7 @@ class Game extends React.Component {
         this.setState({
           waiting: false,
           StrategyBest: response['Best'],
+          listColors: response['List'],
         });
       } else {
         // Prolog query will fail when the clicked color coincides with that in the top left cell.
@@ -93,7 +95,6 @@ class Game extends React.Component {
   }
 
   handleClick(color) {
-    console.log(this.state.pe);
     // No action on click if game is complete or we are waiting.
     if (this.state.complete || this.state.waiting) {
       return;
@@ -192,7 +193,25 @@ class Game extends React.Component {
                   className={"StrategyHelp"}> Strategy Help 
               </button>
               <div className="BEST">{this.state.StrategyBest}</div>
+              
             </div>
+
+
+            <div className="colorsPanel">
+              <div className="colorsLab">List:</div>
+              <div className="colorsList">
+                {this.state.listColors.map((colorS,i) => 
+                   <Square
+                    value={colorS}
+                    key={i}
+                    className={"clicksSquare"}
+                  />
+                  
+                )}
+              </div>
+            </div>
+
+            
 
           </div>
           <Board 
