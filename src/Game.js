@@ -42,6 +42,7 @@ class Game extends React.Component {
       pe: '',
       StrategyBest: 0,
       listColors: [],
+      jugando: false, 
     };
     this.handleClick = this.handleClick.bind(this);
     this.handlePengineCreate = this.handlePengineCreate.bind(this);
@@ -63,7 +64,7 @@ class Game extends React.Component {
 
   handleHelp(){
     // No action on click if game is complete or we are waiting.
-    if (this.state.complete || this.state.waiting) {
+    if (this.state.complete || this.state.waiting || this.state.jugando) {
       return;
     }
     
@@ -189,7 +190,7 @@ class Game extends React.Component {
               <input type="number" min="1" max="8" onChange={e=>this.setState({
                   pe:e.target.value})}/> 
               <button
-                  onClick={() => this.handleHelp()} name="Strategy Help" disabled={this.state.waiting} 
+                  onClick={() => this.handleHelp()} name="Strategy Help" disabled={false} 
                   className={"StrategyHelp"}> Strategy Help 
               </button>
               <div className="BEST">{this.state.StrategyBest}</div>
