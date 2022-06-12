@@ -22,10 +22,6 @@ flick(Grid, CN, NGrid, PosX, PosY, CantTotal):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 colors([r,p,g,b,y,v]).
 
-%insertarUltimo(X,[],[X]).
-%insertarUltimo(X,[L|Li],[L|Zi]):-insertarUltimo(X,Li,Zi).
-%agregar(X, L, Lnueva):- Lnueva=[X|L].
-
 allColorsButC(Color, Colors):-
 	colors(AllColors), 
 	delete(AllColors, Color, Colors).
@@ -79,9 +75,6 @@ obtenerElemGrilla(PosX, PosY, Grid, E):-
     nth0(PosX, Grid, List), nth0(PosY, List, E).
 
 
-
-%codigo de mauro%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 adyCStar(Origin, Grid, Res, Long) :-
     adyCStarSpread([Origin], [], Grid, Res),
     length(Res, Long).

@@ -37,10 +37,10 @@ class Game extends React.Component {
       complete: false,  // true if game is complete, false otherwise
       waiting: false,
       origin: undefined,
-      clicks:[],
-      capturadas:0,
+      clicks: [],
+      capturadas: 0,
       pe: '',
-      StrategyBest: 0,
+      strategyBest: 0,
       listColors: [],
       jugando: false, 
     };
@@ -72,7 +72,7 @@ class Game extends React.Component {
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const PE = this.state.pe;
-    const queryA = "ayuda(" + gridA + ","+fila+","+col+","+PE+",Best,List)";
+    const queryA = "ayuda(" + gridA + "," + fila + "," + col + "," + PE + ", Best, List)";
     
     this.setState({
       waiting: true
@@ -83,7 +83,7 @@ class Game extends React.Component {
         
         this.setState({
           waiting: false,
-          StrategyBest: response['Best'],
+          strategyBest: response['Best'],
           listColors: response['List'],
         });
       } else {
@@ -120,7 +120,7 @@ class Game extends React.Component {
     const length = gridS.split(",").length;
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
-    const queryS = "flick(" + gridS + "," + color + ", Grid, "+fila+","+col+",Capturadas)";
+    const queryS = "flick(" + gridS + "," + color + ", Grid, " + fila + "," + col + ", Capturadas)";
     
     if (!this.state.origin) {
       this.setState({
@@ -182,27 +182,32 @@ class Game extends React.Component {
             <div className="adyPanel">
               <div className="adyLab">Adyacents:</div>
               <div className="adyNum">{this.state.capturadas}</div>
-              
             </div>
 
+          </div>
+         
+          <Board 
+            grid={this.state.grid} 
+            origin={this.state.origin} 
+            onOriginSelected={!this.state.origin ? this.onOriginSelected : undefined}
+          />
+        <div className="rightPanel">
             <div className="strategyPanel">
-              <div className="strategyLab">Strategy Depth:</div>
+              <div className="strategyLab">Ayuda estrategia:</div>
               <input type="number" min="1" max="8" onChange={e=>this.setState({
                   pe:e.target.value})}/> 
               <button
-                  onClick={() => this.handleHelp()} name="Strategy Help" disabled={false} 
-                  className={"StrategyHelp"}> Strategy Help 
+                  onClick={() => this.handleHelp()} name="strategy Help" disabled={false} 
+                  className={"strategyHelp"}> Help 
               </button>
-              <div className="BEST">{this.state.StrategyBest}</div>
-              
-            </div>
+              <div className="BEST">{this.state.strategyBest}</div>
+              </div>
 
-
-            <div className="colorsPanel">
+              <div className="colorsPanel">
               <div className="colorsLab">List:</div>
               <div className="colorsList">
                 {this.state.listColors.map((colorS,i) => 
-                   <Square
+                  <Square
                     value={colorS}
                     key={i}
                     className={"clicksSquare"}
@@ -210,20 +215,12 @@ class Game extends React.Component {
                   
                 )}
               </div>
-            </div>
-
-            
-
+              </div>
           </div>
-          <Board 
-            grid={this.state.grid} 
-            origin={this.state.origin} 
-            onOriginSelected={!this.state.origin ? this.onOriginSelected : undefined}
-          />
 
-            <div className="EndGame">
+        <div className="EndGame">
               {this.state.complete===true ? <img src="win.jpeg" alt="MDN"></img> : ""}
-            </div>
+          </div>
 
         </div>
 
