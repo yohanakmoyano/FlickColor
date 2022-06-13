@@ -193,14 +193,19 @@ class Game extends React.Component {
           />
         <div className="rightPanel">
             <div className="strategyPanel">
-              <div className="strategyLab">Ayuda estrategia:</div>
+              <div className="strategyLab">Strategy Help:</div>
               <input type="number" min="1" max="8" onChange={e=>this.setState({
                   pe:e.target.value})}/> 
               <button
                   onClick={() => this.handleHelp()} name="strategy Help" disabled={false} 
                   className={"strategyHelp"}> Help 
               </button>
-              <div className="BEST">{this.state.strategyBest}</div>
+              <div className="strategyBestLab">Possible Captured:</div>
+              <div className="BEST">
+                  {this.state.strategyBest}
+              </div>
+
+              
               </div>
 
               <div className="colorsPanel">
