@@ -60,10 +60,17 @@ mayorC(BestPathOne, BestPathAll, R, _SecO, SecA, SecA):-
     Aux = BestPathAll,
     R is Aux.
 
+mayorC(BestPathOne, BestPathAll, 0, SecO, SecA, SecA):-
+    BestPathOne = BestPathAll,
+    length(SecO, RO),
+    length(SecA, RA),
+    RA<RO.
 
-mayorC(BestPathOne, BestPathAll, 0, _SecO, SecA, SecA):-
-    BestPathOne = BestPathAll.
-    
+mayorC(BestPathOne, BestPathAll, 0, SecO, SecA, SecO):-
+    BestPathOne = BestPathAll,
+    length(SecO, RO),
+    length(SecA, RA),
+    RA>=RO.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % obtenerElemGrilla(+PosX, +PosY, +Grid, -E)
 % PosX es la posicion "X" de la celda pasada por parametro

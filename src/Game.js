@@ -72,7 +72,8 @@ class Game extends React.Component {
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const PE = this.state.pe;
-    const queryA = "ayuda(" + gridA + "," + fila + "," + col + "," + PE + ", Best, List)";
+    const queryA = "ayuda(" + gridA + "," + fila + "," + col + "," + PE + ",Best,List)";
+    console.log(queryA);
     
     this.setState({
       waiting: true
@@ -80,7 +81,6 @@ class Game extends React.Component {
 
     this.pengine.query(queryA, (success, response) => {
       if (success) {
-        
         this.setState({
           waiting: false,
           strategyBest: response['Best'],
