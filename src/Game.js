@@ -39,7 +39,7 @@ class Game extends React.Component {
       origin: undefined,
       clicks: [],
       capturadas: 0,
-      pe: '',
+      pe: 1,
       strategyBest: 0,
       listColors: [],
       playing: false, 
@@ -67,13 +67,18 @@ class Game extends React.Component {
     if (this.state.complete || this.state.waiting || this.state.playing) {
       return;
     }
-    
+
+    if (!this.state.origin) {
+      this.setState({
+          origin: [0,0],
+      })
+    }  
+
     const gridA = JSON.stringify(this.state.grid).replaceAll('"', "");
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const PE = this.state.pe;
     const queryA = "ayuda(" + gridA + "," + fila + "," + col + "," + PE + ",Best,List)";
-    console.log(queryA);
     
     this.setState({
       waiting: true
@@ -121,7 +126,7 @@ class Game extends React.Component {
     const fila = this.state.origin ? this.state.origin[0] : 0;
     const col = this.state.origin ? this.state.origin[1] : 0;
     const queryS = "flick(" + gridS + "," + color + ", Grid, " + fila + "," + col + ", Capturadas)";
-    
+
     if (!this.state.origin) {
       this.setState({
           origin: [0,0],
@@ -194,9 +199,11 @@ class Game extends React.Component {
         <div className="rightPanel">
             <div className="strategyPanel">
               <div className="strategyLab">Strategy Help:</div>
-              <input type="number" min="1" max="5" onChange={e=>this.setState({
-                  pe:e.target.value})}/> 
+              <input type="number" min="1" max="5" defaultValue="1" onChange={e=>this.setState(
+                {pe:e.target.value}
+                )}/> 
               <button
+                  id="mybutton"
                   onClick={() => this.handleHelp()} name="strategy Help" disabled={false} 
                   className={"strategyHelp"}> Help 
               </button>

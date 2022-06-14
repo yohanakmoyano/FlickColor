@@ -59,6 +59,8 @@ ayuda(Grid, PosX, PosY, PE, Best, Sec):-
 % PosX es la posicion "X" de la celda pasada por parametro
 % PosY es la posicion "Y" de la celda pasada por parametro
 % PE parámetro profundidad de estrategia
+% devuelve el mejor número de celdas capturadas y 
+% una secuencia de colores de profundidad PE.
 
 helpAll(_Grid, [], _PosX, _PosY, _PE, 0, []).
 
@@ -72,6 +74,8 @@ helpAll(_Grid, [], _PosX, _PosY, _PE, 0, []).
 % si se seleccionan los colores que muestra Sec.  
 % Sec secuencia de colores que consiguen capturar la mayor
 % cantidad de celdas
+% devuelve el mejor número de celdas capturadas y 
+% una secuencia de colores de profundidad PE.
 
 helpAll(Grid, Colors, PosX, PosY, PE, Best, Sec):-
 	[C|Cs] = Colors,
@@ -88,6 +92,7 @@ helpAll(Grid, Colors, PosX, PosY, PE, Best, Sec):-
 % CantTotal numero que indica la mayor cantidad de celdas que pueden capturarse  
 % [Color] lista de colores que consiguen capturar la mayor
 % cantidad de celdas
+% devuelve el mejor número de celdas capturadas y el Color asociada a ese recorrido.
 
 helpOne(Grid, Color, PosX, PosY, PE, CantTotal, [Color]):-
     PE = 1, !,
@@ -106,6 +111,7 @@ helpOne(Grid, Color, PosX, PosY, _PE, CantTotal, [Color]):-
 % PE parámetro profundidad de estrategia
 % Best numero que indica la mayor cantidad de celdas que pueden capturarse  
 % [Color|Sec] Inserta el Color en la secuencia de colores Sec
+% devuelve el mejor número de celdas capturadas y el Color asociada a ese recorrido.
 
 helpOne(Grid, Color, PosX, PosY, PE, Best, [Color|Sec]):-
     PE > 1,
@@ -167,12 +173,32 @@ obtenerElemGrilla(PosX, PosY, Grid, E):-
     nth0(PosX, Grid, List), nth0(PosY, List, E).
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% adyCStar(+Origin, +Grid, -Res, -Long) 
+% Origin es la posicion (X,Y) de la celda pasada por parametro
+% Grid grilla de colores pasada por parametro
+% Res lista de visitados
+% Long longitud de la lista que se va a devolver
+% Retorna la lista de visitados y su longitud
+
 adyCStar(Origin, Grid, Res, Long) :-
     adyCStarSpread([Origin], [], Grid, Res),
     length(Res, Long).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% adyCStarSpread(+[], +Vis, +_Grid, -Vis).
+% Vis lista de visitados
+% Grid grilla de colores pasada por parametro
+% Retorna la lista de visitados
+
 adyCStarSpread([], Vis, _Grid, Vis).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% adyCStarSpread(+Pend, +Vis, +_Grid, -Vis)
+% Pend lista de pendientes a ser visitados
+% Vis lista de visitados
+% Grid grilla de colores pasada por parametro
+% Retorna la lista de visitados
 adyCStarSpread(Pend, Vis, Grid, Res):-
     Pend = [P|Ps],
     findall(A, 
@@ -189,6 +215,13 @@ adyCStarSpread(Pend, Vis, Grid, Res):-
  * adyC(+P, +Grid, -A)
  */
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% adyC(+P, +Grid, -A):-
+% P elemento pasado por parametro
+% Grid grilla de colores pasada por parametro
+% A adyacentes del elemento P pasado por parametro
+% Retorna los adyacentes del elemento P pasado por parametro
+
 adyC(P, Grid, A):-
     ady(P, Grid, A),
     color(P, Grid, C),
@@ -197,6 +230,13 @@ adyC(P, Grid, A):-
 /* 
  * ady(+P, +Grid, -A)
  */
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ady([X, Y], Grid, [X1, Y]):-
+% [X,Y] posicion (X,Y) pasada por parametro
+% Grid grilla de colores pasada por parametro
+% [X1, Y] devuelve una lista con una posición de los adyacentes.
+% Retorna una lista con una posición de los adyacentes.
 
 ady([X, Y], Grid, [X1, Y]):-
     length(Grid, L),
@@ -220,6 +260,13 @@ ady([X, Y], _Grid, [X, Y1]):-
 /* 
  * color(P, Grid, C)
  */
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% color(+[X,Y], +Grid, -C):-
+% [X,Y] posicion (X,Y) pasada por parametro
+% Grid grilla de colores pasada por parametro
+% C devuelve el elemento de la posición.
+% Retorna el elemento de la posición.
 
 color([X,Y], Grid, C):-
     nth0(X, Grid, F),
